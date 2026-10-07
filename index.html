@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lead Follow-Up Cost Calculator | Ianthe Hernandez</title>
+<meta name="description" content="An interactive calculator that estimates what slow or missed lead follow-up could be costing your business.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b1426;
+    --panel: #101c33;
+    --alt: #0d182c;
+    --border: #22304d;
+    --gold: #d9b25f;
+    --gold-hover: #e6c27a;
+    --text: #e8ecf4;
+    --soft: #dbe2ef;
+    --muted: #a7b3c8;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-size: 17px; line-height: 1.6;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 56px 20px 40px; }
+  .eyebrow { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-weight: 700; margin: 0 0 14px; }
+  h1 { font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(30px, 6vw, 44px); line-height: 1.15; margin: 0 0 14px; }
+  .lede { color: var(--muted); font-size: 18px; margin: 0 0 32px; max-width: 640px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 28px; }
+  .card h2 { font-family: 'Playfair Display', serif; font-weight: 500; font-size: 22px; margin: 0 0 20px; }
+  .field { margin-bottom: 20px; }
+  .field:last-child { margin-bottom: 0; }
+  label { display: block; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+  .hint { display: block; color: var(--muted); font-size: 14px; margin-bottom: 8px; }
+  .control { position: relative; }
+  .control .affix {
+    position: absolute; top: 0; bottom: 0; display: flex; align-items: center;
+    color: var(--muted); pointer-events: none; font-weight: 700;
+  }
+  .control .pre { left: 14px; }
+  .control .post { right: 14px; }
+  input[type="number"], select {
+    width: 100%; font: inherit; color: var(--text); background: var(--alt);
+    border: 1px solid var(--border); border-radius: 8px; padding: 13px 14px;
+    transition: border-color .15s ease, box-shadow .15s ease;
+    appearance: none; -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input.has-pre { padding-left: 30px; }
+  input.has-post { padding-right: 36px; }
+  select {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'><path d='M1 1l6 6 6-6' stroke='%23d9b25f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px;
+  }
+  input:hover, select:hover { border-color: #3a4a6b; }
+  input:focus-visible, select:focus-visible { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold); }
+
+  .out-label { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-weight: 700; margin: 0 0 6px; }
+  .big { font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(40px, 9vw, 58px); line-height: 1.05; color: var(--gold); margin: 0; word-break: break-word; }
+  .per { color: var(--muted); font-size: 16px; margin: 4px 0 20px; }
+  .row { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--border); }
+  .row span:first-child { color: var(--muted); }
+  .row strong { color: var(--text); text-align: right; }
+  .empty { color: var(--muted); margin: 0; }
+  .note { color: var(--muted); font-size: 14px; margin: 16px 0 0; }
+  details { margin-top: 14px; color: var(--muted); font-size: 14px; }
+  summary { cursor: pointer; color: var(--soft); font-weight: 700; }
+  summary:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  details p { margin: 10px 0 0; }
+  .cta { margin-top: 20px; padding: 24px; border: 1px solid var(--gold); border-radius: 12px; background: var(--alt); }
+  .cta h2 { font-family: 'Playfair Display', serif; font-size: 22px; line-height: 1.25; margin: 0 0 10px; }
+  .cta p { color: var(--soft); margin: 0 0 16px; font-size: 16px; }
+  .btn {
+    display: inline-block; text-align: center; font: inherit; font-weight: 700; text-decoration: none;
+    padding: 13px 26px; border-radius: 4px; border: 1px solid var(--gold); cursor: pointer;
+    background: var(--gold); color: var(--bg);
+    transition: box-shadow .15s ease, transform .15s ease, background .15s ease;
+  }
+  .btn:hover { background: var(--gold-hover); box-shadow: 0 0 0 2px #fff; transform: translateY(-1px); }
+  .btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  footer { text-align: center; color: var(--muted); font-size: 14px; padding: 8px 20px 48px; }
+  footer a { color: var(--gold); font-weight: 700; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  @media (max-width: 720px) {
+    .grid { grid-template-columns: 1fr; }
+    .card { padding: 22px 18px; }
+    .btn { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <p class="eyebrow">Lead Follow-Up Cost Calculator</p>
+  <h1>What is slow follow-up costing you?</h1>
+  <p class="lede">Enter four numbers about your business. See an estimate of the revenue slipping away while leads wait.</p>
+
+  <div class="grid">
+    <section class="card" aria-labelledby="inputs-h">
+      <h2 id="inputs-h">Your numbers</h2>
+      <div class="field">
+        <label for="leads">New leads per month</label>
+        <span class="hint" id="leads-hint">Everyone who asks about working with you.</span>
+        <input type="number" id="leads" inputmode="numeric" min="0" step="1" placeholder="50" aria-describedby="leads-hint">
+      </div>
+      <div class="field">
+        <label for="sale">Average sale value</label>
+        <span class="hint" id="sale-hint">What a typical new customer is worth to you.</span>
+        <div class="control">
+          <span class="affix pre" aria-hidden="true">$</span>
+          <input type="number" id="sale" class="has-pre" inputmode="decimal" min="0" step="any" placeholder="2,000" aria-describedby="sale-hint">
+        </div>
+      </div>
+      <div class="field">
+        <label for="close">Close rate</label>
+        <span class="hint" id="close-hint">Out of every 100 leads, how many become customers.</span>
+        <div class="control">
+          <input type="number" id="close" class="has-post" inputmode="decimal" min="0" max="100" step="any" placeholder="20" aria-describedby="close-hint">
+          <span class="affix post" aria-hidden="true">%</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="speed">How fast do new leads hear back from you?</label>
+        <span class="hint" id="speed-hint">Be honest. Most businesses are slower than they think.</span>
+        <select id="speed" aria-describedby="speed-hint">
+          <option value="">Choose one</option>
+          <option value="0">Within 5 minutes</option>
+          <option value="0.10">Within an hour</option>
+          <option value="0.25">Within the same day</option>
+          <option value="0.40">The next day or later</option>
+          <option value="0.50">There is no consistent follow-up</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="out-h" aria-live="polite">
+      <h2 id="out-h">Your estimate</h2>
+      <div id="empty"><p class="empty">Fill in all four fields to see your estimate.</p></div>
+      <div id="out" style="display:none">
+        <p class="out-label" id="headline-label">Revenue left on the table</p>
+        <p class="big" id="yearly">$0</p>
+        <p class="per">per year, about <strong id="monthly">$0</strong> a month</p>
+        <div class="row"><span>Deals lost each month</span><strong id="deals">0</strong></div>
+        <div class="row"><span>Your close rate today</span><strong id="rate-now">0%</strong></div>
+        <div class="row"><span>Your close rate with fast follow-up</span><strong id="rate-best">0%</strong></div>
+        <p class="note" id="zero-note" style="display:none">Responding within 5 minutes is the benchmark in this estimate, so no revenue shows as lost. Consistency across every lead still matters.</p>
+        <details>
+          <summary>How this is estimated</summary>
+          <p>This is an estimate, not a measurement of your business. It assumes that the slower you follow up, the lower your close rate is compared with following up within 5 minutes. The size of that effect is a simple planning assumption, so treat the result as a direction, not an exact figure.</p>
+        </details>
+      </div>
+    </section>
+  </div>
+
+  <section class="cta">
+    <h2>Want to see where else your business is losing time and revenue?</h2>
+    <p>Start with a Business Growth &amp; Systems Assessment. You get a clear picture of how your business runs today, with written findings and a next step.</p>
+    <a class="btn" href="https://www.ianthehernandez.com/#assessment">See the Assessment</a>
+  </section>
+  <p class="note" style="text-align:center;margin-top:20px">Your numbers stay in your browser. Nothing is saved or sent.</p>
+</main>
+<footer>By <a href="https://www.ianthehernandez.com">Ianthe Hernandez</a></footer>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+
+  // Planning assumption. Each response speed maps to the share of your best-case
+  // close rate that you lose by following up that slowly (0.25 means 25 percent).
+  // These values live in the dropdown options above. Edit them there to change the estimate.
+
+  var money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+  var number = new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 });
+
+  function read(id) {
+    var raw = $(id).value;
+    if (raw === "") return NaN;
+    return parseFloat(raw);
+  }
+
+  function update() {
+    var leads = read("leads");
+    var sale = read("sale");
+    var close = read("close");
+    var speedRaw = $("speed").value;
+    var ok = leads > 0 && sale > 0 && close > 0 && close <= 100 && speedRaw !== "";
+    var out = $("out"), empty = $("empty");
+    if (!ok) { out.style.display = "none"; empty.style.display = "block"; return; }
+
+    var penalty = parseFloat(speedRaw);             // share of best-case closing lost
+    var rate = close / 100;                         // close rate today
+    var best = Math.min(1, rate / (1 - penalty));   // close rate with fast follow-up
+    var lostDeals = leads * (best - rate);
+    var monthly = lostDeals * sale;
+    var yearly = monthly * 12;
+
+    $("yearly").textContent = money.format(yearly);
+    $("monthly").textContent = money.format(monthly);
+    $("deals").textContent = number.format(lostDeals);
+    $("rate-now").textContent = number.format(rate * 100) + "%";
+    $("rate-best").textContent = number.format(best * 100) + "%";
+    $("zero-note").style.display = penalty === 0 ? "block" : "none";
+    empty.style.display = "none"; out.style.display = "block";
+  }
+
+  ["leads", "sale", "close"].forEach(function (id) { $(id).addEventListener("input", update); });
+  $("speed").addEventListener("change", update);
+  update();
+})();
+</script>
+</body>
+</html>
